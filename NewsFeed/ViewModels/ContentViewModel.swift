@@ -115,11 +115,7 @@ class ContentViewModel: ObservableObject {
     func fetchNewsWithFilters(includesDateFilter: Bool, loginController: LoginController) {
         if includesDateFilter {
             newsApiCommucication.fetchNewsWithFilters(currentPage: self.currentPageNewsList, perPage: self.perPageNewsList, loginController: loginController, title: self.titleFilter, date: self.dateFilter) { (response, err) in
-    //            print("News")
-    //            print("Response")
-    //            print(response ?? "none")
-    //            print("Error")
-    //            print(err ?? "none")
+                print("HERE")
                 if err == nil {
                     if let unwrapedResponse = response {
                         if let data = unwrapedResponse["data"] as? Array<Any> {
@@ -155,11 +151,6 @@ class ContentViewModel: ObservableObject {
             }
         } else {
             newsApiCommucication.fetchNewsWithFilters(currentPage: self.currentPageNewsList, perPage: self.perPageNewsList, loginController: loginController, title: self.titleFilter, date: self.dateFilter) { (response, err) in
-    //            print("News")
-    //            print("Response")
-    //            print(response ?? "none")
-    //            print("Error")
-    //            print(err ?? "none")
                 if err == nil {
                     if let unwrapedResponse = response {
                         if let data = unwrapedResponse["data"] as? Array<Any> {
@@ -232,18 +223,18 @@ class ContentViewModel: ObservableObject {
         }
         
         if let tempPublishedAt = newOrHighlight["published_at"] as? String {
-            print(tempPublishedAt)
-            let dateFormatter = DateFormatter()
-            dateFormatter.locale = .init(identifier: "en_US_POSIX")
-            dateFormatter.dateFormat = "yyyy-MM-dd"
-            if let date = dateFormatter.date(from: tempPublishedAt) {
+            
+            //Trying to create a Date() object from a string in the followibg format
+            let dateFormatterGet = DateFormatter()
+            dateFormatterGet.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.000Z"
+            if let date = dateFormatterGet.date(from: tempPublishedAt) {
                 //print(date)
                 publishedAt = date
             } else {
                 publishedAt = Date()
             }
         } else {
-            
+            //In the last case, if the date format is corrupted or different, asssing the current date
             publishedAt = Date()
         }
         

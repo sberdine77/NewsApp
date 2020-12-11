@@ -15,7 +15,7 @@ class NewsAPICommunication {
         if let token = loginController.getToken() {
             let headers: HTTPHeaders = [.accept("application/json"), .authorization(bearerToken: token)]
             AF.request("\(baseUrl)v1/client/news/highlights", method: .get, headers: headers).responseJSON { (response) in
-                //print(response)
+                print(response)
                 switch response.result {
                 case .success(let JSON):
                     if let responseSuccess = JSON as? [String: Any] {
@@ -36,7 +36,7 @@ class NewsAPICommunication {
         if let token = loginController.getToken() {
             let headers: HTTPHeaders = [.accept("application/json"), .authorization(bearerToken: token)]
             AF.request("\(baseUrl)v1/client/news?current_page=\(currentPage)&per_page=\(perPage)", method: .get, headers: headers).responseJSON { (response) in
-                //print(response)
+                print(response)
                 switch response.result {
                 case .success(let JSON):
                     if let responseSuccess = JSON as? [String: Any] {
@@ -57,15 +57,14 @@ class NewsAPICommunication {
         if let token = loginController.getToken() {
             let headers: HTTPHeaders = [.accept("application/json"), .authorization(bearerToken: token)]
             
+            //Format the date to "yyy-mm-dd" so the query only go as further as the day
             let dateFormatter = DateFormatter()
             let enUSPosixLocale = Locale(identifier: "en_US_POSIX")
             dateFormatter.locale = enUSPosixLocale
             dateFormatter.dateFormat = "yyyy-MM-dd"
             let createdDate = dateFormatter.string(from: date ?? Date())
-            print("DATA MODIFICADA")
-            print(createdDate)
             
-            AF.request("\(baseUrl)v1/client/news?current_page=\(currentPage)&per_page=\(perPage)&published_at=\(createdDate)[A-Za-z0-9]*", method: .get, headers: headers).responseJSON { (response) in
+            AF.request("\(baseUrl)v1/client/news?current_page=1&per_page=\(perPage)&published_at=\(createdDate)T00:00:00.000Z", method: .get, headers: headers).responseJSON { (response) in
                 print(response)
                 switch response.result {
                 case .success(let JSON):

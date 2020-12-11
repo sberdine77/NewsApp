@@ -55,7 +55,11 @@ struct ContentView: View {
                             .padding(.bottom, 30)
                             .onAppear(perform:{
                                 if ((viewModel.news.last == oneNew) && (viewModel.isLoadingNewsListView == false)) {
-                                    viewModel.fetchNews(loginController: loginController)
+                                    if((self.dateFilterActivated || self.titleFilterActivated)) {
+                                        self.fetchWithFilters()
+                                    } else {
+                                        viewModel.fetchNews(loginController: loginController)
+                                    }
                                 }
                             })
                         NavigationLink(destination: viewModel.viewForSelectedNew(oneNew)) {
