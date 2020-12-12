@@ -70,8 +70,13 @@ class ContentViewModel: ObservableObject {
         }
     }
     
-    func fetchNews(loginController: LoginController) {
+    func fetchNews(loginController: LoginController, isFirstReload: Bool) {
         self.isLoadingNewsListView = true;
+        if isFirstReload {
+            self.news = []
+            self.currentPageNewsList = 1
+            self.currentPageNewsWithFiltersList = 1
+        }
         newsApiCommucication.fetchNews(currentPage: self.currentPageNewsList, perPage: self.perPageNewsList, loginController: loginController) { (response, err) in
             if err == nil {
                 if let unwrapedResponse = response {
@@ -135,7 +140,7 @@ class ContentViewModel: ObservableObject {
                 }
             }
         } else {
-            newsApiCommucication.fetchNewsWithFilters(currentPage: self.currentPageNewsList, perPage: self.perPageNewsList, loginController: loginController, title: self.titleFilter, date: self.dateFilter) { (response, err) in
+            newsApiCommucication.fetchNewsWithFilters(currentPage: self.currentPageNewsList, perPage: self.perPageNewsList, loginController: loginController, title: self.titleFilter, date: nil) { (response, err) in
                 if err == nil {
                     if let unwrapedResponse = response {
                         if let data = unwrapedResponse["data"] as? Array<Any> {

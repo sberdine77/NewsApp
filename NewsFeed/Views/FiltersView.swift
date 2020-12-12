@@ -15,20 +15,19 @@ struct FiltersView: View {
     @Binding var showFilterView: Bool;
     
     @Binding var dateChanged: Bool;
-    @Binding var titleChanged: Bool;
     @Binding var someFilterChanged: Bool;
 
     var body: some View {
-        VStack (alignment: .center) {
-            Text("Filter by title:")
-            TextField("Enter new's title...", text: $title, onCommit:  {
-                if(($title.wrappedValue != "") && ($title.wrappedValue != " ")) {
-                    self.$titleChanged.wrappedValue = true;
-                    self.$someFilterChanged.wrappedValue = true;
-                }
-            })
-        }
-        .padding(.all, 20)
+//        VStack (alignment: .center) {
+//            Text("Filter by title:")
+//            TextField("Enter new's title...", text: $title, onCommit:  {
+//                if(($title.wrappedValue != "") && ($title.wrappedValue != " ")) {
+//                    self.$titleChanged.wrappedValue = true;
+//                    self.$someFilterChanged.wrappedValue = true;
+//                }
+//            })
+//        }
+//        .padding(.all, 20)
         
         VStack (alignment: .center) {
             Text("Filter by date:")
@@ -37,14 +36,15 @@ struct FiltersView: View {
             }
             .onChange(of: $date.wrappedValue, perform: { value in
                 self.$dateChanged.wrappedValue = true;
-                self.$someFilterChanged.wrappedValue = true;            })
+                self.$someFilterChanged.wrappedValue = true;
+                
+            })
         }
         Button("Clear") {
             self.$title.wrappedValue = ""
-            self.$date.wrappedValue = Date()
+            //self.$date.wrappedValue = Date()
             self.$dateChanged.wrappedValue = false
-            self.$titleChanged.wrappedValue = false
-            self.$someFilterChanged.wrappedValue = false;
+            self.$someFilterChanged.wrappedValue = true;
         }
         Button("Ok") {
             $showFilterView.wrappedValue = false
