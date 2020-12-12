@@ -23,6 +23,7 @@ class ContentViewModel: ObservableObject {
     
     @Published var isLoadingNewsListView: Bool = false;
     var currentPageNewsList = 1;
+    var currentPageNewsWithFiltersList = 1;
     var perPageNewsList = 10;
     @Published var titleFilter: String = "";
     @Published var dateFilter: Date = Date();
@@ -72,25 +73,12 @@ class ContentViewModel: ObservableObject {
     func fetchNews(loginController: LoginController) {
         self.isLoadingNewsListView = true;
         newsApiCommucication.fetchNews(currentPage: self.currentPageNewsList, perPage: self.perPageNewsList, loginController: loginController) { (response, err) in
-//            print("News")
-//            print("Response")
-//            print(response ?? "none")
-//            print("Error")
-//            print(err ?? "none")
             if err == nil {
                 if let unwrapedResponse = response {
                     if let data = unwrapedResponse["data"] as? Array<Any> {
                         for element in data {
                             if let tempNew = element as? [String: Any] {
-                                let decoder = JSONDecoder()
-                                do {
-                                    let jsonData = try JSONSerialization.data (withJSONObject: tempNew, options: [])
-                                    let decodedNew = try decoder.decode(New.self, from: jsonData)
-                                    self.news.append(decodedNew)
-                                } catch {
-                                    print("Error directly decoding new. Using personalized decoder...")
-                                    self.news.append(self.personalizedDecoderForNewOrHighlight(newOrHighlight: tempNew))
-                                }
+                                self.news.append(self.personalizedDecoderForNewOrHighlight(newOrHighlight: tempNew))
                             }
                         }
                         //print(self.news)
@@ -112,24 +100,21 @@ class ContentViewModel: ObservableObject {
         }
     }
     
-    func fetchNewsWithFilters(includesDateFilter: Bool, loginController: LoginController) {
+    func fetchNewsWithFilters(includesDateFilter: Bool, loginController: LoginController, isFirstReload: Bool) {
         if includesDateFilter {
-            newsApiCommucication.fetchNewsWithFilters(currentPage: self.currentPageNewsList, perPage: self.perPageNewsList, loginController: loginController, title: self.titleFilter, date: self.dateFilter) { (response, err) in
+            if isFirstReload {
+                self.news = []
+                self.currentPageNewsList = 1
+                self.currentPageNewsWithFiltersList = 1
+            }
+            newsApiCommucication.fetchNewsWithFilters(currentPage: self.currentPageNewsWithFiltersList, perPage: self.perPageNewsList, loginController: loginController, title: self.titleFilter, date: self.dateFilter) { (response, err) in
                 print("HERE")
                 if err == nil {
                     if let unwrapedResponse = response {
                         if let data = unwrapedResponse["data"] as? Array<Any> {
                             for element in data {
                                 if let tempNew = element as? [String: Any] {
-                                    let decoder = JSONDecoder()
-                                    do {
-                                        let jsonData = try JSONSerialization.data (withJSONObject: tempNew, options: [])
-                                        let decodedNew = try decoder.decode(New.self, from: jsonData)
-                                        self.news.append(decodedNew)
-                                    } catch {
-                                        print("Error directly decoding new. Using personalized decoder...")
-                                        self.news.append(self.personalizedDecoderForNewOrHighlight(newOrHighlight: tempNew))
-                                    }
+                                    self.news.append(self.personalizedDecoderForNewOrHighlight(newOrHighlight: tempNew))
                                 }
                             }
                             //print(self.news)

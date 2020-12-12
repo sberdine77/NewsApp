@@ -16,6 +16,7 @@ struct ContentView: View {
     @State var showFilterView: Bool = false;
     @State var dateFilterActivated: Bool = false;
     @State var titleFilterActivated: Bool = false;
+    @State var someFilterChanged: Bool = false;
     
     var body: some View {
         NavigationView {
@@ -39,7 +40,7 @@ struct ContentView: View {
                     .padding(.bottom, 10)
                 }
                 HStack {
-                    NavigationLink(destination: FiltersView(title: $viewModel.titleFilter, date: $viewModel.dateFilter, showFilterView: self.$showFilterView, dateChanged: self.$dateFilterActivated, titleChanged: self.$titleFilterActivated).onDisappear(perform: {self.fetchWithFilters()}), isActive: self.$showFilterView) {
+                    NavigationLink(destination: FiltersView(title: $viewModel.titleFilter, date: $viewModel.dateFilter, showFilterView: self.$showFilterView, dateChanged: self.$dateFilterActivated, titleChanged: self.$titleFilterActivated, someFilterChanged: self.$someFilterChanged).onDisappear(perform: {if self.someFilterChanged { viewModel.fetchNewsWithFilters(includesDateFilter: dateFilterActivated, loginController: loginController, isFirstReload: true)}; self.someFilterChanged = false}), isActive: self.$showFilterView) {
                         HStack {
                             Text("Your News")
                                 .font(.title2)
@@ -56,7 +57,7 @@ struct ContentView: View {
                             .onAppear(perform:{
                                 if ((viewModel.news.last == oneNew) && (viewModel.isLoadingNewsListView == false)) {
                                     if((self.dateFilterActivated || self.titleFilterActivated)) {
-                                        self.fetchWithFilters()
+                                        viewModel.fetchNewsWithFilters(includesDateFilter: dateFilterActivated, loginController: loginController, isFirstReload: false)
                                     } else {
                                         viewModel.fetchNews(loginController: loginController)
                                     }
@@ -85,10 +86,6 @@ struct ContentView: View {
             viewModel.fetchHeadlines(loginController: loginController)
             viewModel.fetchNews(loginController: loginController)
         })
-    }
-    
-    func fetchWithFilters(){
-        viewModel.fetchNewsWithFilters(includesDateFilter: dateFilterActivated, loginController: loginController)
     }
 }
 
