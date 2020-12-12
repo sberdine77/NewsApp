@@ -37,7 +37,6 @@ class NewsAPICommunication {
             let headers: HTTPHeaders = [.accept("application/json"), .authorization(bearerToken: token)]
             let parameters = ["current_page": currentPage, "per_page": perPage]
             AF.request("\(baseUrl)v1/client/news", method: .get, parameters: parameters, headers: headers).responseJSON { (response) in
-                print(response)
                 switch response.result {
                 case .success(let JSON):
                     if let responseSuccess = JSON as? [String: Any] {
@@ -69,7 +68,6 @@ class NewsAPICommunication {
                 let parameters = ["current_page": currentPage, "per_page": perPage, "published_at": "\(createdDate)T00:00:00.000Z"] as [String : Any]
                 
                 AF.request("\(baseUrl)v1/client/news", method: .get, parameters: parameters, headers: headers).responseJSON { (response) in
-                    print(response)
                     switch response.result {
                     case .success(let JSON):
                         if let responseSuccess = JSON as? [String: Any] {

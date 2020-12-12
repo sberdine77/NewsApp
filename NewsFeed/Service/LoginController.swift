@@ -7,9 +7,14 @@
 
 import Foundation
 import Alamofire
+import SwiftUI
+import CoreData
 
 class LoginController: ObservableObject {
-    @Published private var token: String?
+    
+    var context: NSManagedObjectContext? = nil;
+    
+    @Published private var token: String? = nil
     private let baseUrl = "https://mesa-news-api.herokuapp.com/"
     
     func getToken() -> String? {
@@ -17,7 +22,7 @@ class LoginController: ObservableObject {
     }
     
     func logout() {
-        self.token = nil;
+        self.deleteToken()
     }
     
     func signUp(name: String, email: String, password: String, completionHandler: @escaping (_ response: String?, _ error: Error?) -> Void) {
@@ -66,6 +71,11 @@ class LoginController: ObservableObject {
                 if let responseSuccess = JSON as? [String: Any] {
                     if let tokenResponse = responseSuccess["token"] as? String {
                         self.token = tokenResponse
+                        
+                        let storageToken = Token(context: self.context!)
+                        storageToken.token = self.token
+                        self.saveContext()
+                        
                         completionHandler("Success", nil)
                     } else {
                         if let errorMessage = responseSuccess["message"] as? String {
@@ -87,4 +97,39 @@ class LoginController: ObservableObject {
             }
         }
     }
+    
+    private func saveContext() {
+        do {
+          try context!.save()
+        } catch {
+          print("Error saving managed object context: \(error)")
+        }
+    }
+    
+    func fetchToken() {
+        
+        let tokenFetchRequest: NSFetchRequest<Token> = Token.fetchRequest()
+        
+        do {
+            let tokenFetched = try context!.fetch(tokenFetchRequest)
+            if tokenFetched.count > 0 {
+                self.token = tokenFetched[0].token
+            }
+        } catch let error {
+            print("Faild to fetch token. Error: \(error)")
+        }
+    }
+    
+    private func deleteToken() {
+        let tokenFetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Token")
+        let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: tokenFetchRequest)
+        
+        do {
+            try context!.execute(batchDeleteRequest)
+            self.token = nil
+        } catch let error {
+            print("Faild to fetch token. Error: \(error)")
+        }
+    }
+    
 }

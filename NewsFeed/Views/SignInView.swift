@@ -22,4 +22,5 @@ struct SignInView: View {
             viewModel.viewForSignInSuccess()
         }
     }
+    
 }
