@@ -10,6 +10,7 @@ import SwiftUI
 
 struct HeadlineCellView: View {
     @StateObject var viewModel: HeadlineCellViewModel
+    
     var body: some View {
         VStack (alignment: .leading) {
             Image(uiImage: viewModel.new.image)
@@ -25,7 +26,7 @@ struct HeadlineCellView: View {
                     .font(.headline)
                     .lineLimit(2)
                 Spacer()
-                Button(action: {viewModel.favorite()}, label: {
+                Button(action: {viewModel.buttonDisabled = true; viewModel.favorite()}, label: {
                         if(viewModel.isFavorite) {
                             Image("favorite_full_icon")
                                 .resizable()
@@ -34,6 +35,7 @@ struct HeadlineCellView: View {
                                 .resizable()
                         }
                 })
+                .disabled(viewModel.buttonDisabled)
                 .frame(width: 20, height: 20, alignment: .leading)
                 .buttonStyle(PlainButtonStyle())
                 .foregroundColor(Color.accentColor)

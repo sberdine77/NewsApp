@@ -6,6 +6,9 @@ target 'NewsFeed' do
   use_frameworks!
 
   pod 'Alamofire', '~> 5.2'
+  pod 'Firebase/Analytics'
+  pod 'Firebase/Auth'
+  pod 'Firebase/Firestore'
 
   # Pods for NewsFeed
 

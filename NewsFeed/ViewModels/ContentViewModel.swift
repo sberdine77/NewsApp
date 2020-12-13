@@ -28,6 +28,8 @@ class ContentViewModel: ObservableObject {
     @Published var titleFilter: String = "";
     @Published var dateFilter: Date = Date();
     
+    let firebaseFavoriteNewsService = FirebaseFavoriteNewsService()
+    
     init(news: [New], headlines: [New], viewForSelectedNew: @escaping (New) -> NewDetailView, viewForHighlightCell: @escaping (New) -> HeadlineCellView, viewForNewCell: @escaping (New) -> NewCellView) {
         self.news = news;
         self.headlines = headlines;
@@ -49,7 +51,6 @@ class ContentViewModel: ObservableObject {
                         for element in data {
                             if let tempNew = element as? [String: Any] {
                                 var decodedNew = self.personalizedDecoderForNewOrHighlight(newOrHighlight: tempNew)
-                                print(decodedNew.image_url)
                                 self.newsApiCommucication.fetchNewsImage(url: decodedNew.image_url) { (image, err) in
                                     if err == nil {
                                         if let unwrapedImage = image {
@@ -58,6 +59,9 @@ class ContentViewModel: ObservableObject {
                                         } else {
                                             self.headlines.append(decodedNew)
                                         }
+                                    } else {
+                                        print("Failed to download news image. Error: \(String(describing: err))")
+                                        self.news.append(decodedNew)
                                     }
                                 }
                             }
@@ -87,7 +91,6 @@ class ContentViewModel: ObservableObject {
                         for element in data {
                             if let tempNew = element as? [String: Any] {
                                 var decodedNew = self.personalizedDecoderForNewOrHighlight(newOrHighlight: tempNew)
-                                print(decodedNew.image_url)
                                 self.newsApiCommucication.fetchNewsImage(url: decodedNew.image_url) { (image, err) in
                                     if err == nil {
                                         if let unwrapedImage = image {
@@ -96,6 +99,9 @@ class ContentViewModel: ObservableObject {
                                         } else {
                                             self.news.append(decodedNew)
                                         }
+                                    } else {
+                                        print("Failed to download news image. Error: \(String(describing: err))")
+                                        self.news.append(decodedNew)
                                     }
                                 }
                             }
@@ -119,13 +125,13 @@ class ContentViewModel: ObservableObject {
         }
     }
     
-    func fetchNewsWithFilters(includesDateFilter: Bool, loginController: LoginController, isFirstReload: Bool) {
-        if includesDateFilter {
-            if isFirstReload {
-                self.news = []
-                self.currentPageNewsList = 1
-                self.currentPageNewsWithFiltersList = 1
-            }
+    func fetchNewsWithFilters(includesDateFilter: Bool, filterByFavorite: Bool, loginController: LoginController, isFirstReload: Bool) {
+        if isFirstReload {
+            self.news = []
+            self.currentPageNewsList = 1
+            self.currentPageNewsWithFiltersList = 1
+        }
+        if includesDateFilter && !filterByFavorite {
             newsApiCommucication.fetchNewsWithFilters(currentPage: self.currentPageNewsWithFiltersList, perPage: self.perPageNewsList, loginController: loginController, title: self.titleFilter, date: self.dateFilter) { (response, err) in
                 print("HERE")
                 if err == nil {
@@ -134,15 +140,18 @@ class ContentViewModel: ObservableObject {
                             for element in data {
                                 if let tempNew = element as? [String: Any] {
                                     var decodedNew = self.personalizedDecoderForNewOrHighlight(newOrHighlight: tempNew)
-                                    print(decodedNew.image_url)
                                     self.newsApiCommucication.fetchNewsImage(url: decodedNew.image_url) { (image, err) in
                                         if err == nil {
                                             if let unwrapedImage = image {
                                                 decodedNew.image = unwrapedImage
                                                 self.news.append(decodedNew)
                                             } else {
+                                                print("Failed to download news image")
                                                 self.news.append(decodedNew)
                                             }
+                                        } else {
+                                            print("Failed to download news image. Error: \(String(describing: err))")
+                                            self.news.append(decodedNew)
                                         }
                                     }
                                 }
@@ -162,46 +171,39 @@ class ContentViewModel: ObservableObject {
                 } else {
                     print("No responses")
                     self.isLoadingNewsListView = false
+                }
+            }
+        } else if !includesDateFilter && filterByFavorite {
+            firebaseFavoriteNewsService.getFavorites { (response, err) in
+                if let error = err {
+                    print("Error getting favorites: \(error)")
+                } else {
+                    if let favorites = response {
+                        for favorite in favorites {
+                            var decodedNew = self.personalizedDecoderForNewOrHighlight(newOrHighlight: favorite)
+                            self.newsApiCommucication.fetchNewsImage(url: decodedNew.image_url) { (image, err) in
+                                if err == nil {
+                                    if let unwrapedImage = image {
+                                        decodedNew.image = unwrapedImage
+                                        self.news.append(decodedNew)
+                                    } else {
+                                        self.news.append(decodedNew)
+                                    }
+                                } else {
+                                    print("Failed to download news image. Error: \(String(describing: err))")
+                                    self.news.append(decodedNew)
+                                }
+                            }
+                        }
+                    } else {
+                        print("Favorites response is not unwrapping.")
+                    }
                 }
             }
         } else {
-            newsApiCommucication.fetchNewsWithFilters(currentPage: self.currentPageNewsList, perPage: self.perPageNewsList, loginController: loginController, title: self.titleFilter, date: nil) { (response, err) in
-                if err == nil {
-                    if let unwrapedResponse = response {
-                        if let data = unwrapedResponse["data"] as? Array<Any> {
-                            for element in data {
-                                if let tempNew = element as? [String: Any] {
-                                    var decodedNew = self.personalizedDecoderForNewOrHighlight(newOrHighlight: tempNew)
-                                    print(decodedNew.image_url)
-                                    self.newsApiCommucication.fetchNewsImage(url: decodedNew.image_url) { (image, err) in
-                                        if err == nil {
-                                            if let unwrapedImage = image {
-                                                decodedNew.image = unwrapedImage
-                                                self.news.append(decodedNew)
-                                            } else {
-                                                self.news.append(decodedNew)
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            //print(self.news)
-                            self.currentPageNewsList += 1
-                            self.isLoadingNewsListView = false
-                        } else {
-                            print("No responses")
-                            self.isLoadingNewsListView = false
-                        }
-                    } else {
-                        //No responses
-                        print("No responses")
-                        self.isLoadingNewsListView = false
-                    }
-                } else {
-                    print("No responses")
-                    self.isLoadingNewsListView = false
-                }
-            }
+            // If this code is executed, that means someone is trying to run the function without passing any filters in the view. Make shure to fix that logic. Running fetchNews instead.
+            print("Someone is trying to run the function without passing any filters in the view. Make shure to fix that logic. Running fetchNews instead")
+            self.fetchNews(loginController: loginController, isFirstReload: isFirstReload)
         }
         print("filtering")
     }

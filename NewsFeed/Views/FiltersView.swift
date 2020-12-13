@@ -15,6 +15,7 @@ struct FiltersView: View {
     @Binding var showFilterView: Bool;
     
     @Binding var dateChanged: Bool;
+    @Binding var filterByFavorite: Bool;
     @Binding var someFilterChanged: Bool;
 
     var body: some View {
@@ -38,6 +39,11 @@ struct FiltersView: View {
                 self.$dateChanged.wrappedValue = true;
                 self.$someFilterChanged.wrappedValue = true;
                 
+            })
+            Toggle(isOn: $filterByFavorite) {
+                Text("Filter by Favorite")
+            }.onChange(of: $filterByFavorite.wrappedValue, perform: { value in
+                self.$someFilterChanged.wrappedValue = true
             })
         }
         Button("Clear") {

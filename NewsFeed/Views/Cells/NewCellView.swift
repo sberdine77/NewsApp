@@ -10,7 +10,6 @@ import SwiftUI
 
 struct NewCellView: View {
     @StateObject var viewModel: NewCellViewModel
-    //@State var favoriteButtonTaped: Bool = false;
     
     var body: some View {
         VStack (alignment: .leading, spacing: 10) {
@@ -21,7 +20,7 @@ struct NewCellView: View {
                         .font(.headline)
                         .lineLimit(2)
                     Spacer()
-                    Button(action: {viewModel.favorite()}, label: {
+                    Button(action: {viewModel.buttonDisabled = true; viewModel.favorite()}, label: {
                             if(viewModel.isFavorite) {
                                 Image("favorite_full_icon")
                                     .resizable()
@@ -30,6 +29,7 @@ struct NewCellView: View {
                                     .resizable()
                             }
                     })
+                    .disabled(viewModel.buttonDisabled)
                     .frame(width: 20, height: 20, alignment: .leading)
                     .buttonStyle(PlainButtonStyle())
                     .foregroundColor(Color.accentColor)

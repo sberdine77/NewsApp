@@ -20,6 +20,8 @@
 		1D02FAB5258014C900CCBB4D /* LoadIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D02FAB4258014C900CCBB4D /* LoadIndicatorView.swift */; };
 		1D21F56B258015EA00103C59 /* Spinner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D21F56A258015EA00103C59 /* Spinner.swift */; };
 		1D21F573258028E100103C59 /* FiltersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D21F572258028E100103C59 /* FiltersView.swift */; };
+		1D225E8825865FEC00820B80 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1D225E8725865FEC00820B80 /* GoogleService-Info.plist */; };
+		1D225EAB2586668B00820B80 /* FirebaseFavoriteNewsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D225EAA2586668B00820B80 /* FirebaseFavoriteNewsService.swift */; };
 		1D46A6332579B14D00E3AF70 /* NewCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D46A6322579B14D00E3AF70 /* NewCellView.swift */; };
 		1D46A6382579B15C00E3AF70 /* HeadlineCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D46A6372579B15C00E3AF70 /* HeadlineCellView.swift */; };
 		1D46A6402579BA5200E3AF70 /* NewCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D46A63F2579BA5200E3AF70 /* NewCellViewModel.swift */; };
@@ -74,6 +76,8 @@
 		1D02FAB4258014C900CCBB4D /* LoadIndicatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadIndicatorView.swift; sourceTree = "<group>"; };
 		1D21F56A258015EA00103C59 /* Spinner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spinner.swift; sourceTree = "<group>"; };
 		1D21F572258028E100103C59 /* FiltersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FiltersView.swift; sourceTree = "<group>"; };
+		1D225E8725865FEC00820B80 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		1D225EAA2586668B00820B80 /* FirebaseFavoriteNewsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseFavoriteNewsService.swift; sourceTree = "<group>"; };
 		1D46A6322579B14D00E3AF70 /* NewCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewCellView.swift; sourceTree = "<group>"; };
 		1D46A6372579B15C00E3AF70 /* HeadlineCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeadlineCellView.swift; sourceTree = "<group>"; };
 		1D46A63F2579BA5200E3AF70 /* NewCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewCellViewModel.swift; sourceTree = "<group>"; };
@@ -179,6 +183,7 @@
 				1D834025257863EE006B9994 /* Assets.xcassets */,
 				1D83402A257863EE006B9994 /* Persistence.swift */,
 				1D83402F257863EE006B9994 /* Info.plist */,
+				1D225E8725865FEC00820B80 /* GoogleService-Info.plist */,
 				1D83402C257863EE006B9994 /* NewsFeed.xcdatamodeld */,
 				1D834027257863EE006B9994 /* Preview Content */,
 			);
@@ -258,6 +263,7 @@
 				1D83406E25787581006B9994 /* NewsAPICommunication.swift */,
 				1D02FA54257D19EF00CCBB4D /* ViewModelFactory.swift */,
 				1D02FA7C257DB7A500CCBB4D /* LoginController.swift */,
+				1D225EAA2586668B00820B80 /* FirebaseFavoriteNewsService.swift */,
 			);
 			path = Service;
 			sourceTree = "<group>";
@@ -395,6 +401,7 @@
 			files = (
 				1D834029257863EE006B9994 /* Preview Assets.xcassets in Resources */,
 				1D834026257863EE006B9994 /* Assets.xcassets in Resources */,
+				1D225E8825865FEC00820B80 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -527,6 +534,7 @@
 				1D46A64A2579D47100E3AF70 /* NewDetailView.swift in Sources */,
 				1D02FA55257D19EF00CCBB4D /* ViewModelFactory.swift in Sources */,
 				1D02FAA0257E915000CCBB4D /* FirstViewModel.swift in Sources */,
+				1D225EAB2586668B00820B80 /* FirebaseFavoriteNewsService.swift in Sources */,
 				1D83406925787524006B9994 /* ContentViewModel.swift in Sources */,
 				1D02FA73257DAD9700CCBB4D /* SignUpViewModel.swift in Sources */,
 				1D83402B257863EE006B9994 /* Persistence.swift in Sources */,

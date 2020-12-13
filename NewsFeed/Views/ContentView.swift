@@ -16,6 +16,7 @@ struct ContentView: View {
     @State var showFilterView: Bool = false;
     @State var dateFilterActivated: Bool = false;
     @State var someFilterChanged: Bool = false;
+    @State var filterByFavorite: Bool = false;
     
     var body: some View {
         NavigationView {
@@ -38,7 +39,7 @@ struct ContentView: View {
                     .frame(width: nil, height: 210, alignment: .leading)
                 }
                 HStack {
-                    NavigationLink(destination: FiltersView(title: $viewModel.titleFilter, date: $viewModel.dateFilter, showFilterView: self.$showFilterView, dateChanged: self.$dateFilterActivated, someFilterChanged: self.$someFilterChanged).onDisappear(perform: {self.performFilters()}), isActive: self.$showFilterView) {
+                    NavigationLink(destination: FiltersView(title: $viewModel.titleFilter, date: $viewModel.dateFilter, showFilterView: self.$showFilterView, dateChanged: self.$dateFilterActivated, filterByFavorite: self.$filterByFavorite, someFilterChanged: self.$someFilterChanged).onDisappear(perform: {self.performFilters()}), isActive: self.$showFilterView) {
                         HStack {
                             Text("Your News")
                                 .font(.title2)
@@ -51,13 +52,13 @@ struct ContentView: View {
                 ForEach(viewModel.news, id: \.id) { oneNew in
                     HStack {
                         viewModel.viewForNewCell(oneNew)
-                            //.padding(.bottom, 10)
                             .onAppear(perform:{
                                 if ((viewModel.news.last == oneNew) && (viewModel.isLoadingNewsListView == false)) {
-                                    //If more filters are activated, add the booblean controller in this conditional
-                                    if((self.dateFilterActivated)) {
-                                        viewModel.fetchNewsWithFilters(includesDateFilter: dateFilterActivated, loginController: loginController, isFirstReload: false)
-                                    } else {
+                                    //If more filters are added, add the booblean controller in this conditional
+                                    //Filter by favorite is not using pagination for now, so we do not fetch new pages when this filter is activated
+                                    if(self.dateFilterActivated && !self.filterByFavorite) {
+                                        viewModel.fetchNewsWithFilters(includesDateFilter: dateFilterActivated, filterByFavorite: filterByFavorite, loginController: loginController, isFirstReload: false)
+                                    } else if (!self.dateFilterActivated && !self.filterByFavorite) {
                                         viewModel.fetchNews(loginController: loginController, isFirstReload: false)
                                     }
                                 }
@@ -90,10 +91,10 @@ struct ContentView: View {
     func performFilters() {
         //Checking if the filters were cleared or if there's a filter activated
         //Change this conditional if more filters are added in the future
-        if self.someFilterChanged && self.dateFilterActivated {
-            viewModel.fetchNewsWithFilters(includesDateFilter: dateFilterActivated, loginController: loginController, isFirstReload: true)
+        if self.someFilterChanged && (self.dateFilterActivated || self.filterByFavorite)  {
+            viewModel.fetchNewsWithFilters(includesDateFilter: dateFilterActivated, filterByFavorite: filterByFavorite, loginController: loginController, isFirstReload: true)
             self.someFilterChanged = false
-        } else if self.someFilterChanged && !self.dateFilterActivated {
+        } else if self.someFilterChanged && (!self.dateFilterActivated && !self.filterByFavorite) {
             viewModel.fetchNews(loginController: loginController, isFirstReload: true)
             self.someFilterChanged = false
         }

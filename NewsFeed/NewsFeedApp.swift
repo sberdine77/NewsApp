@@ -7,13 +7,21 @@
 
 import SwiftUI
 import CoreData
+import Firebase
 
 @main
 struct NewsFeedApp: App {
+    
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    
     @Environment(\.scenePhase) private var scenePhase
     let viewModelFactory = ViewModelFactory()
     @StateObject var loginController = LoginController()
 
+    init() {
+        FirebaseApp.configure()
+    }
+    
     var body: some Scene {
         WindowGroup {
             FirstView {
@@ -52,4 +60,12 @@ struct NewsFeedApp: App {
       }
     }
     
+}
+
+class AppDelegate: NSObject, UIApplicationDelegate {
+  func application(_ application: UIApplication,
+                   didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+    print("Colors application is starting up. ApplicationDelegate didFinishLaunchingWithOptions.")
+    return true
+  }
 }

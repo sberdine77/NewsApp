@@ -13,13 +13,17 @@ struct SignUpView: View {
     @EnvironmentObject var loginController: LoginController
     
     var body: some View {
-        if(loginController.getToken() == nil) {
-            Text("SignUp, please")
-            Button(action: {viewModel.signUp(loginController: loginController)}, label: {
-                Text("Button")
-            })
-        } else {
-            viewModel.viewForSignUpSuccess()
+        VStack {
+            if(loginController.getToken() == nil) {
+                Text("SignUp, please")
+                Button(action: {viewModel.signUp(loginController: loginController)}, label: {
+                    Text("Button")
+                })
+            } else {
+                viewModel.viewForSignUpSuccess()
+            }
+        }.alert(isPresented: $viewModel.showAlert) {
+            Alert(title: Text(viewModel.alertTitle), message: Text(viewModel.alertMessage), dismissButton: .default(Text("Ok")))
         }
     }
 }
