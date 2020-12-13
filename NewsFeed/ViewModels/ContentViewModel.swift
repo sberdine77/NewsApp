@@ -6,7 +6,7 @@
 //
 
 import Foundation
-
+import UIKit
 
 class ContentViewModel: ObservableObject {
     
@@ -48,14 +48,17 @@ class ContentViewModel: ObservableObject {
                     if let data = unwrapedResponse["data"] as? Array<Any> {
                         for element in data {
                             if let tempNew = element as? [String: Any] {
-                                let decoder = JSONDecoder()
-                                do {
-                                    let jsonData = try JSONSerialization.data (withJSONObject: tempNew, options: [])
-                                    let decodedNew = try decoder.decode(New.self, from: jsonData)
-                                    self.headlines.append(decodedNew)
-                                } catch {
-                                    print("Error directly decoding new. Using personalized decoder...")
-                                    self.headlines.append(self.personalizedDecoderForNewOrHighlight(newOrHighlight: tempNew))
+                                var decodedNew = self.personalizedDecoderForNewOrHighlight(newOrHighlight: tempNew)
+                                print(decodedNew.image_url)
+                                self.newsApiCommucication.fetchNewsImage(url: decodedNew.image_url) { (image, err) in
+                                    if err == nil {
+                                        if let unwrapedImage = image {
+                                            decodedNew.image = unwrapedImage
+                                            self.headlines.append(decodedNew)
+                                        } else {
+                                            self.headlines.append(decodedNew)
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -83,7 +86,18 @@ class ContentViewModel: ObservableObject {
                     if let data = unwrapedResponse["data"] as? Array<Any> {
                         for element in data {
                             if let tempNew = element as? [String: Any] {
-                                self.news.append(self.personalizedDecoderForNewOrHighlight(newOrHighlight: tempNew))
+                                var decodedNew = self.personalizedDecoderForNewOrHighlight(newOrHighlight: tempNew)
+                                print(decodedNew.image_url)
+                                self.newsApiCommucication.fetchNewsImage(url: decodedNew.image_url) { (image, err) in
+                                    if err == nil {
+                                        if let unwrapedImage = image {
+                                            decodedNew.image = unwrapedImage
+                                            self.news.append(decodedNew)
+                                        } else {
+                                            self.news.append(decodedNew)
+                                        }
+                                    }
+                                }
                             }
                         }
                         //print(self.news)
@@ -119,7 +133,18 @@ class ContentViewModel: ObservableObject {
                         if let data = unwrapedResponse["data"] as? Array<Any> {
                             for element in data {
                                 if let tempNew = element as? [String: Any] {
-                                    self.news.append(self.personalizedDecoderForNewOrHighlight(newOrHighlight: tempNew))
+                                    var decodedNew = self.personalizedDecoderForNewOrHighlight(newOrHighlight: tempNew)
+                                    print(decodedNew.image_url)
+                                    self.newsApiCommucication.fetchNewsImage(url: decodedNew.image_url) { (image, err) in
+                                        if err == nil {
+                                            if let unwrapedImage = image {
+                                                decodedNew.image = unwrapedImage
+                                                self.news.append(decodedNew)
+                                            } else {
+                                                self.news.append(decodedNew)
+                                            }
+                                        }
+                                    }
                                 }
                             }
                             //print(self.news)
@@ -146,14 +171,17 @@ class ContentViewModel: ObservableObject {
                         if let data = unwrapedResponse["data"] as? Array<Any> {
                             for element in data {
                                 if let tempNew = element as? [String: Any] {
-                                    let decoder = JSONDecoder()
-                                    do {
-                                        let jsonData = try JSONSerialization.data (withJSONObject: tempNew, options: [])
-                                        let decodedNew = try decoder.decode(New.self, from: jsonData)
-                                        self.news.append(decodedNew)
-                                    } catch {
-                                        print("Error directly decoding new. Using personalized decoder...")
-                                        self.news.append(self.personalizedDecoderForNewOrHighlight(newOrHighlight: tempNew))
+                                    var decodedNew = self.personalizedDecoderForNewOrHighlight(newOrHighlight: tempNew)
+                                    print(decodedNew.image_url)
+                                    self.newsApiCommucication.fetchNewsImage(url: decodedNew.image_url) { (image, err) in
+                                        if err == nil {
+                                            if let unwrapedImage = image {
+                                                decodedNew.image = unwrapedImage
+                                                self.news.append(decodedNew)
+                                            } else {
+                                                self.news.append(decodedNew)
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -240,7 +268,7 @@ class ContentViewModel: ObservableObject {
             url = "https://google.com"
         }
         
-        if let tempImageUrl = newOrHighlight["url"] as? String {
+        if let tempImageUrl = newOrHighlight["image_url"] as? String {
             image_url = tempImageUrl
         } else {
             image_url = "https://google.com"

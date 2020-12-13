@@ -12,11 +12,11 @@ struct HeadlineCellView: View {
     @StateObject var viewModel: HeadlineCellViewModel
     var body: some View {
         VStack (alignment: .leading) {
-            Image("newImage")
+            Image(uiImage: viewModel.new.image)
                 .renderingMode(.original)
                 .resizable()
-                .scaledToFit()
-                .frame(maxWidth: 200, alignment: .center)
+                .scaledToFill()
+                .frame(maxWidth: 200, maxHeight: 100, alignment: .center)
                 .cornerRadius(5)
             HStack (alignment: .top) {
                 Text(viewModel.new.title)

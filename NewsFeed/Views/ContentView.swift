@@ -23,7 +23,7 @@ struct ContentView: View {
                 VStack (alignment: .leading) {
                     Text("Headlines")
                         .font(.title2)
-                        .padding(.bottom, 30)
+                        .padding(.bottom, 10)
                     ScrollView (.horizontal){
                         VStack (alignment: .leading) {
                             HStack (alignment: .top, spacing: 25) {
@@ -33,10 +33,9 @@ struct ContentView: View {
                                     }.buttonStyle(PlainButtonStyle())
                                 }
                             }
-                        }
+                        }.padding(.bottom, 20)
                     }
                     .frame(width: nil, height: 210, alignment: .leading)
-                    .padding(.bottom, 10)
                 }
                 HStack {
                     NavigationLink(destination: FiltersView(title: $viewModel.titleFilter, date: $viewModel.dateFilter, showFilterView: self.$showFilterView, dateChanged: self.$dateFilterActivated, someFilterChanged: self.$someFilterChanged).onDisappear(perform: {self.performFilters()}), isActive: self.$showFilterView) {
@@ -52,7 +51,7 @@ struct ContentView: View {
                 ForEach(viewModel.news, id: \.id) { oneNew in
                     HStack {
                         viewModel.viewForNewCell(oneNew)
-                            .padding(.bottom, 30)
+                            //.padding(.bottom, 10)
                             .onAppear(perform:{
                                 if ((viewModel.news.last == oneNew) && (viewModel.isLoadingNewsListView == false)) {
                                     //If more filters are activated, add the booblean controller in this conditional

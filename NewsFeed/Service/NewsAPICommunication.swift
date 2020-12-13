@@ -102,7 +102,18 @@ class NewsAPICommunication {
                 completionHandler(nil, err)
             }
         }
-        
-
     }
+    
+    func fetchNewsImage(url: String, completionHandler: @escaping (_ response: UIImage?, _ error: Error?) -> Void) {
+        AF.download(url).responseData { (response) in
+            if let data = response.value {
+                let image = UIImage(data: data)
+                completionHandler(image, nil)
+            } else {
+                let err = NewsRequestError(message: "Failed to download news image.")
+                completionHandler(nil, err)
+            }
+        }
+    }
+    
 }

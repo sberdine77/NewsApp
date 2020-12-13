@@ -6,8 +6,9 @@
 //
 
 import Foundation
+import UIKit
 
-struct New: Identifiable, Decodable, Equatable {
+struct New: Identifiable, Equatable {
     var id = UUID();
     let title: String;
     let description: String;
@@ -17,4 +18,5 @@ struct New: Identifiable, Decodable, Equatable {
     let highlight: Bool;
     let url: String;
     let image_url: String;
+    var image: UIImage = UIImage(named: "placeholder-image") ?? UIImage();
 }
