@@ -18,33 +18,25 @@ struct FiltersView: View {
     @Binding var someFilterChanged: Bool;
 
     var body: some View {
-//        VStack (alignment: .center) {
-//            Text("Filter by title:")
-//            TextField("Enter new's title...", text: $title, onCommit:  {
-//                if(($title.wrappedValue != "") && ($title.wrappedValue != " ")) {
-//                    self.$titleChanged.wrappedValue = true;
-//                    self.$someFilterChanged.wrappedValue = true;
-//                }
-//            })
-//        }
-//        .padding(.all, 20)
         
-        VStack (alignment: .center) {
-            Text("Filter by date:")
+        VStack (alignment: .leading) {
             DatePicker(selection: $date, in: ...Date(), displayedComponents: .date){
-                Text("Date")
+                Text("Filter by date:")
             }
             .onChange(of: $date.wrappedValue, perform: { value in
                 dateChanged = true;
                 someFilterChanged = true;
                 
             })
+            .frame(alignment: .center)
             Toggle(isOn: $filterByFavorite) {
                 Text("Filter by Favorite")
             }.onChange(of: $filterByFavorite.wrappedValue, perform: { value in
                 someFilterChanged = true
             })
+            .frame(alignment: .center)
         }
+        .padding(20)
         Button("Clear") {
             //self.$date.wrappedValue = Date()
             filterByFavorite = false
