@@ -18,6 +18,7 @@ struct NewsFeedApp: App {
     @Environment(\.scenePhase) private var scenePhase
     let viewModelFactory = ViewModelFactory()
     @StateObject var loginController = LoginController()
+    @State var isSignUp: Bool = false
 
     init() {
         FirebaseApp.configure()
@@ -25,10 +26,7 @@ struct NewsFeedApp: App {
     
     var body: some Scene {
         WindowGroup {
-            FirstView {
-                //SignUpView(viewModel: viewModelFactory.makeSignUpViewModel())
-                SignInView(viewModel: viewModelFactory.makeSignInViewModel())
-            }
+            FirstView(viewModelFactory: self.viewModelFactory)
             .environment(\.managedObjectContext, persistentContainer.viewContext)
             .environmentObject(loginController)
         }

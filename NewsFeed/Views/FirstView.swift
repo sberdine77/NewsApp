@@ -11,19 +11,31 @@ import Foundation
 import SwiftUI
 
 struct FirstView: View {
-    let content: SignInView
+    
+    @State var isSignUp: Bool = false
+    
+    let viewModelFactory: ViewModelFactory
+    
     @Environment(\.managedObjectContext) var managedObjectContext
     @EnvironmentObject var loginController: LoginController
     
-    init(@ViewBuilder content: () -> SignInView) {
-        self.content = content()
+    init(viewModelFactory: ViewModelFactory) {
+        self.viewModelFactory = viewModelFactory
     }
     
     var body: some View {
-        content
-            .onAppear(perform: {
-                loginController.context = managedObjectContext
-                loginController.fetchToken()
-            })
+        if isSignUp {
+            SignUpView(viewModel: viewModelFactory.makeSignUpViewModel(), isSignUp: self.$isSignUp)
+                .onAppear(perform: {
+                    loginController.context = managedObjectContext
+                    loginController.fetchToken()
+                })
+        } else {
+            SignInView(viewModel: viewModelFactory.makeSignInViewModel(), isSignUp: self.$isSignUp)
+                .onAppear(perform: {
+                    loginController.context = managedObjectContext
+                    loginController.fetchToken()
+                })
+        }
     }
 }

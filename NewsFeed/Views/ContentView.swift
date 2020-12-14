@@ -32,6 +32,7 @@ struct ContentView: View {
                                 ForEach(viewModel.headlines, id: \.id) { oneNew in
                                     NavigationLink(destination: viewModel.viewForSelectedNew(oneNew)) {
                                         viewModel.viewForHighlightCell(oneNew)
+                                            .padding(.top, 0)
                                     }.buttonStyle(PlainButtonStyle())
                                 }
                             }
@@ -53,6 +54,8 @@ struct ContentView: View {
                 ForEach(viewModel.news, id: \.id) { oneNew in
                     HStack {
                         viewModel.viewForNewCell(oneNew)
+                            .padding(.top, 0)
+                            .frame(alignment: .top)
                             .onAppear(perform:{
                                 if ((viewModel.news.last == oneNew) && (viewModel.isLoadingNewsListView == false)) {
                                     //If more filters are added, add the booblean controller in this conditional

@@ -11,8 +11,10 @@ import SwiftUI
 import CoreData
 import Firebase
 import FBSDKLoginKit
+import FBSDKCoreKit
 
 class LoginController: NSObject, ObservableObject ,LoginButtonDelegate {
+    
     func loginButton(_ loginButton: FBLoginButton, didCompleteWith result: LoginManagerLoginResult?, error: Error?) {
         if error != nil {
             // print(error?.localizedDescription)
@@ -65,6 +67,14 @@ class LoginController: NSObject, ObservableObject ,LoginButtonDelegate {
     func loginButtonDidLogOut(_ loginButton: FBLoginButton) {
         let firebaseAuth = Auth.auth()
         do {
+            let grapfReq = GraphRequest.init(graphPath: "me/permissions", httpMethod: .delete)
+              print(grapfReq)
+            let cookies = HTTPCookieStorage.shared
+            let facebookCookies = cookies.cookies
+            for cookie in facebookCookies! {
+                print("Deleting cookie \(cookie)")
+                cookies.deleteCookie(cookie)
+            }
           try firebaseAuth.signOut()
         } catch let signOutError as NSError {
           print ("Error signing out: %@", signOutError)
