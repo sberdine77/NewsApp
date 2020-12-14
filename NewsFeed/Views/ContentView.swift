@@ -7,6 +7,7 @@
 
 import SwiftUI
 import CoreData
+import FBSDKLoginKit
 
 struct ContentView: View {
     //@Environment(\.managedObjectContext) private var viewContext
@@ -79,6 +80,7 @@ struct ContentView: View {
             .navigationBarItems(trailing:
                 Button("Logout") {
                     loginController.logout()
+                    LoginManager().logOut()
                 }
             )
         }

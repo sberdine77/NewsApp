@@ -8,6 +8,7 @@
 import SwiftUI
 import CoreData
 import Firebase
+import FBSDKCoreKit
 
 @main
 struct NewsFeedApp: App {
@@ -63,8 +64,12 @@ struct NewsFeedApp: App {
 }
 
 class AppDelegate: NSObject, UIApplicationDelegate {
-  func application(_ application: UIApplication,
+    
+    func application(_ application: UIApplication,
                    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
     return true
-  }
+    }
+    
+    func application( _ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:] ) -> Bool { ApplicationDelegate.shared.application( app, open: url, sourceApplication: options[UIApplication.OpenURLOptionsKey.sourceApplication] as? String, annotation: options[UIApplication.OpenURLOptionsKey.annotation] ) }
+    
 }

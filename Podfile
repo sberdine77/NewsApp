@@ -9,6 +9,7 @@ target 'NewsFeed' do
   pod 'Firebase/Analytics'
   pod 'Firebase/Auth'
   pod 'Firebase/Firestore'
+  pod 'FBSDKLoginKit'
 
   # Pods for NewsFeed
 

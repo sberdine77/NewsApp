@@ -19,6 +19,9 @@ struct SignInView: View {
                 Button(action: {viewModel.signIn(loginController: loginController)}, label: {
                     Text("Button")
                 })
+                FacebookLoginButtonView(loginController: loginController)
+                    .frame(width: 200, height: 50)
+                
             } else {
                 viewModel.viewForSignInSuccess()
             }

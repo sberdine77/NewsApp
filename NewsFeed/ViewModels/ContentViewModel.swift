@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 class ContentViewModel: ObservableObject {
-    
+
     @Published var news: [New];
     
     @Published var headlines: [New];

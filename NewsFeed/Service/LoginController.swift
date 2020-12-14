@@ -10,8 +10,67 @@ import Alamofire
 import SwiftUI
 import CoreData
 import Firebase
+import FBSDKLoginKit
 
-class LoginController: ObservableObject {
+class LoginController: NSObject, ObservableObject ,LoginButtonDelegate {
+    func loginButton(_ loginButton: FBLoginButton, didCompleteWith result: LoginManagerLoginResult?, error: Error?) {
+        if error != nil {
+            // print(error?.localizedDescription)
+            return
+        }
+
+        if let currentAccessToken = AccessToken.current {
+            let credential = FacebookAuthProvider.credential(withAccessToken: currentAccessToken.tokenString)
+            Auth.auth().signIn(with: credential) { (authResult, error) in
+                if let error = error {
+                    print(error.localizedDescription)
+                } else {
+                    let parameters = ["email": "savio5@savioteste.com", "password": "12345678"]
+                    let headers: HTTPHeaders = [.accept("application/json")]
+                    AF.request("\(self.baseUrl)v1/client/auth/signin", method: .post, parameters: parameters, headers: headers).responseJSON { (response) in
+                        switch response.result {
+                        case .success(let JSON):
+                            if let responseSuccess = JSON as? [String: Any] {
+                                if let tokenResponse = responseSuccess["token"] as? String {
+                                    self.token = tokenResponse
+                                    
+                                    let storageToken = Token(context: self.context!)
+                                    storageToken.token = self.token
+                                    self.saveContext()
+                                    
+                                } else {
+                                    if let errorMessage = responseSuccess["message"] as? String {
+                                        let err = LoginError(message: errorMessage)
+                                        print(err)
+                                    } else {
+                                        let err = LoginError(message: "Uknown error. Please, try again later.")
+                                        print(err)
+                                    }
+                                }
+                            } else {
+                                let err = LoginError(message: "Uknown error. Please, try again later.")
+                                print(err)
+                            }
+                            break
+                        case .failure(let error):
+                            print(error)
+
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    func loginButtonDidLogOut(_ loginButton: FBLoginButton) {
+        let firebaseAuth = Auth.auth()
+        do {
+          try firebaseAuth.signOut()
+        } catch let signOutError as NSError {
+          print ("Error signing out: %@", signOutError)
+        }
+    }
+    
     
     var context: NSManagedObjectContext? = nil;
     
