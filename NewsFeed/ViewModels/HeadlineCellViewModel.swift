@@ -16,51 +16,24 @@ class HeadlineCellViewModel: ObservableObject {
     
     init (new: New) {
         self.new = new;
-        firebaseFavoriteNewsService.isFavorite(title: new.title) { (isFav, err) in
-            if let error = err {
-                print("Error initializing favorite button: \(error)")
-                self.isFavorite = false
-                self.buttonDisabled = true
-            } else {
-                if let control = isFav {
-                    self.isFavorite = control
-                } else {
-                    print("Error initializing favorite button")
-                    self.isFavorite = false
-                    self.buttonDisabled = true
-                }
-            }
-        }
     }
     
+//    deinit {
+//        print("REMOVING LISTENER")
+//        firebaseFavoriteNewsService.favListener?.remove()
+//    }
+    
     func favorite() {
-        firebaseFavoriteNewsService.isFavorite(title: new.title) { (isFav, err) in
-            if let error = err {
-                print("Error favoriting new: \(error)")
-            } else {
-                if let control = isFav {
-                    if control {
-                        self.isFavorite = true
-                    } else {
-                        self.isFavorite = false
-                    }
-                    
-                    if self.isFavorite {
-                        self.unFavorite()
-                    } else {
-                        self.firebaseFavoriteNewsService.addFavorite(favorite: self.encodeNewsOrHighlights(newOrHighlight: self.new)) { (result, err) in
-                            if let error = err {
-                                print("Error favoriting new: \(error)")
-                            } else {
-                                print(result ?? "Success")
-                                self.isFavorite = true
-                                self.buttonDisabled = false
-                            }
-                        }
-                    }
-                    
+        if self.isFavorite {
+            self.unFavorite()
+        } else {
+            self.firebaseFavoriteNewsService.addFavorite(favorite: self.encodeNewsOrHighlights(newOrHighlight: self.new)) { (result, err) in
+                if let error = err {
+                    print("Error favoriting new: \(error)")
                 } else {
-                    print("Error favoriting new.")
+                    print(result ?? "Success")
+                    self.isFavorite = true
+                    self.buttonDisabled = false
                 }
             }
         }
@@ -74,6 +47,24 @@ class HeadlineCellViewModel: ObservableObject {
                 print(response ?? "Success")
                 self.isFavorite = false
                 self.buttonDisabled = false
+            }
+        }
+    }
+    
+    func isFavoriteFunc() {
+        firebaseFavoriteNewsService.isFavorite(title: new.title) { (isFav, err) in
+            if let error = err {
+                print("Error initializing favorite button: \(error)")
+                self.isFavorite = false
+                self.buttonDisabled = true
+            } else {
+                if let control = isFav {
+                    self.isFavorite = control
+                } else {
+                    print("Error initializing favorite button")
+                    self.isFavorite = false
+                    self.buttonDisabled = true
+                }
             }
         }
     }

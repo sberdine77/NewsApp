@@ -16,6 +16,30 @@ class NewCellViewModel: ObservableObject {
     
     init (new: New) {
         self.new = new;
+    }
+    
+//    deinit {
+//        print("REMOVING LISTENER")
+//        firebaseFavoriteNewsService.favListener?.remove()
+//    }
+    
+    func favorite() {
+        if self.isFavorite {
+            self.unFavorite()
+        } else {
+            self.firebaseFavoriteNewsService.addFavorite(favorite: self.encodeNewsOrHighlights(newOrHighlight: self.new)) { (result, err) in
+                if let error = err {
+                    print("Error favoriting new: \(error)")
+                } else {
+                    print(result ?? "Success")
+                    self.isFavorite = true
+                    self.buttonDisabled = false
+                }
+            }
+        }
+    }
+    
+    func isFavoriteFunc() {
         firebaseFavoriteNewsService.isFavorite(title: new.title) { (isFav, err) in
             if let error = err {
                 print("Error initializing favorite button: \(error)")
@@ -28,39 +52,6 @@ class NewCellViewModel: ObservableObject {
                     print("Error initializing favorite button")
                     self.isFavorite = false
                     self.buttonDisabled = true
-                }
-            }
-        }
-    }
-    
-    func favorite() {
-        firebaseFavoriteNewsService.isFavorite(title: new.title) { (isFav, err) in
-            if let error = err {
-                print("Error favoriting new: \(error)")
-            } else {
-                if let control = isFav {
-                    if control {
-                        self.isFavorite = true
-                    } else {
-                        self.isFavorite = false
-                    }
-                    
-                    if self.isFavorite {
-                        self.unFavorite()
-                    } else {
-                        self.firebaseFavoriteNewsService.addFavorite(favorite: self.encodeNewsOrHighlights(newOrHighlight: self.new)) { (result, err) in
-                            if let error = err {
-                                print("Error favoriting new: \(error)")
-                            } else {
-                                print(result ?? "Success")
-                                self.isFavorite = true
-                                self.buttonDisabled = false
-                            }
-                        }
-                    }
-                    
-                } else {
-                    print("Error favoriting new.")
                 }
             }
         }

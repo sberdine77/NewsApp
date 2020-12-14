@@ -66,6 +66,8 @@ struct NewCellView: View {
         .frame(maxWidth: .infinity, maxHeight: 300)
         .padding(.leading, 0)
         .padding(.trailing, 0)
-        //.padding(.bottom, -10)
+        .onAppear(perform: {
+            viewModel.isFavoriteFunc()
+        })
     }
 }

@@ -21,7 +21,7 @@ class SignUpViewModel: ObservableObject {
     }
     
     func signUp(loginController: LoginController){
-        loginController.signUp(name: "Sávio Berdine", email: "savio6@savioteste.com", password: "12345678") { (response, err) in
+        loginController.signUp(name: "Sávio Berdine", email: "savio7@savioteste.com", password: "12345678") { (response, err) in
             if let error = err {
                 print("SignUp error: \(error)")
                 self.showAlert = true

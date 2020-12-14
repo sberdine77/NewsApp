@@ -39,7 +39,7 @@ struct ContentView: View {
                     .frame(width: nil, height: 210, alignment: .leading)
                 }
                 HStack {
-                    NavigationLink(destination: FiltersView(title: $viewModel.titleFilter, date: $viewModel.dateFilter, showFilterView: self.$showFilterView, dateChanged: self.$dateFilterActivated, filterByFavorite: self.$filterByFavorite, someFilterChanged: self.$someFilterChanged).onDisappear(perform: {self.performFilters()}), isActive: self.$showFilterView) {
+                    NavigationLink(destination: FiltersView(date: $viewModel.dateFilter, showFilterView: self.$showFilterView, dateChanged: self.$dateFilterActivated, filterByFavorite: self.$filterByFavorite, someFilterChanged: self.$someFilterChanged).onDisappear(perform: {self.performFilters()}), isActive: self.$showFilterView) {
                         HStack {
                             Text("Your News")
                                 .font(.title2)

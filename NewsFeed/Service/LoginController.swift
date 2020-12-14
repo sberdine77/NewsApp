@@ -33,7 +33,6 @@ class LoginController: ObservableObject {
                 print("Error in Firebase SignUp: \(error)")
                 completionHandler(nil, error)
             } else {
-                print(authResult)
                 let parameters = ["name": name, "email": email, "password": password]
                 let headers: HTTPHeaders = [.accept("application/json")]
                 

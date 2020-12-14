@@ -49,5 +49,8 @@ struct HeadlineCellView: View {
         .frame(maxWidth: 200)
         .padding(.leading, 0)
         .padding(.trailing, 0)
+        .onAppear(perform: {
+            viewModel.isFavoriteFunc()
+        })
     }
 }

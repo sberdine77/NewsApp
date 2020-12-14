@@ -10,7 +10,6 @@ import SwiftUI
 
 struct FiltersView: View {
     //@StateObject var viewModel: FiltersViewModel
-    @Binding var title: String
     @Binding var date: Date
     @Binding var showFilterView: Bool;
     
@@ -36,24 +35,26 @@ struct FiltersView: View {
                 Text("Date")
             }
             .onChange(of: $date.wrappedValue, perform: { value in
-                self.$dateChanged.wrappedValue = true;
-                self.$someFilterChanged.wrappedValue = true;
+                dateChanged = true;
+                someFilterChanged = true;
                 
             })
             Toggle(isOn: $filterByFavorite) {
                 Text("Filter by Favorite")
             }.onChange(of: $filterByFavorite.wrappedValue, perform: { value in
-                self.$someFilterChanged.wrappedValue = true
+                someFilterChanged = true
             })
         }
         Button("Clear") {
-            self.$title.wrappedValue = ""
             //self.$date.wrappedValue = Date()
-            self.$dateChanged.wrappedValue = false
-            self.$someFilterChanged.wrappedValue = true;
+            filterByFavorite = false
+            dateChanged = false
+            someFilterChanged = true
+            showFilterView = false
         }
         Button("Ok") {
             $showFilterView.wrappedValue = false
+            print($showFilterView.wrappedValue)
         }
     }
 }
