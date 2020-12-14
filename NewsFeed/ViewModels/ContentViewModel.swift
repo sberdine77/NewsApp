@@ -40,11 +40,6 @@ class ContentViewModel: ObservableObject {
     
     func fetchHeadlines(loginController: LoginController) {
         newsApiCommucication.fetchHeadlines(loginController: loginController) { (response, err) in
-//            print("Highlights")
-//            print("Response")
-//            print(response ?? "none")
-//            print("Error")
-//            print(err ?? "none")
             if err == nil {
                 if let unwrapedResponse = response {
                     if let data = unwrapedResponse["data"] as? Array<Any> {
@@ -132,7 +127,7 @@ class ContentViewModel: ObservableObject {
             self.currentPageNewsWithFiltersList = 1
         }
         if includesDateFilter && !filterByFavorite {
-            newsApiCommucication.fetchNewsWithFilters(currentPage: self.currentPageNewsWithFiltersList, perPage: self.perPageNewsList, loginController: loginController, title: self.titleFilter, date: self.dateFilter) { (response, err) in
+            newsApiCommucication.fetchNewsWithFilters(currentPage: self.currentPageNewsWithFiltersList, perPage: self.perPageNewsList, loginController: loginController, date: self.dateFilter) { (response, err) in
                 print("HERE")
                 if err == nil {
                     if let unwrapedResponse = response {
@@ -175,6 +170,33 @@ class ContentViewModel: ObservableObject {
             }
         } else if !includesDateFilter && filterByFavorite {
             firebaseFavoriteNewsService.getFavorites { (response, err) in
+                if let error = err {
+                    print("Error getting favorites: \(error)")
+                } else {
+                    if let favorites = response {
+                        for favorite in favorites {
+                            var decodedNew = self.personalizedDecoderForNewOrHighlight(newOrHighlight: favorite)
+                            self.newsApiCommucication.fetchNewsImage(url: decodedNew.image_url) { (image, err) in
+                                if err == nil {
+                                    if let unwrapedImage = image {
+                                        decodedNew.image = unwrapedImage
+                                        self.news.append(decodedNew)
+                                    } else {
+                                        self.news.append(decodedNew)
+                                    }
+                                } else {
+                                    print("Failed to download news image. Error: \(String(describing: err))")
+                                    self.news.append(decodedNew)
+                                }
+                            }
+                        }
+                    } else {
+                        print("Favorites response is not unwrapping.")
+                    }
+                }
+            }
+        } else if includesDateFilter && filterByFavorite {
+            firebaseFavoriteNewsService.getFavoritesFromDate(date: self.dateFilter) { (response, err) in
                 if let error = err {
                     print("Error getting favorites: \(error)")
                 } else {
@@ -247,9 +269,15 @@ class ContentViewModel: ObservableObject {
             //Trying to create a Date() object from a string in the followibg format
             let dateFormatterGet = DateFormatter()
             dateFormatterGet.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.000Z"
+            
+            let dateFormatterGet2 = DateFormatter()
+            dateFormatterGet2.dateFormat = "yyyy-MM-dd"
+            
             if let date = dateFormatterGet.date(from: tempPublishedAt) {
                 //print(date)
                 publishedAt = date
+            } else if let date2 = dateFormatterGet2.date(from: tempPublishedAt) {
+                publishedAt = date2
             } else {
                 publishedAt = Date()
             }

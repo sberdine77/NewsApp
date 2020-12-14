@@ -67,41 +67,6 @@ class FirebaseFavoriteNewsService {
         }
     }
     
-//    func isFavorite(title: String, completionHandler: @escaping (_ response: Bool?, _ error: Error?) -> Void) {
-//        let currentUser = Auth.auth().currentUser
-//        if let user = currentUser {
-//            db.collection("users").document(user.uid).collection("favorites").whereField("title", isEqualTo: title).getDocuments() { (querySnapshot, err) in
-//                if let error = err {
-//                    completionHandler(nil, error)
-//                } else {
-//                    if let snapshot = querySnapshot {
-//                        if snapshot.documents.count > 0 {
-//                            self.favListener = self.db.collection("users").document(user.uid).collection("favorites").document(snapshot.documents[0].documentID).addSnapshotListener { (docSnapshot, err) in
-//                                guard let document = docSnapshot else {
-//                                    completionHandler(false, nil)
-//                                    return
-//                                }
-//                                guard document.data() != nil else {
-//                                    completionHandler(false, nil)
-//                                    return
-//                                }
-//                                completionHandler(true, nil)
-//                            }
-//                        } else {
-//                            completionHandler(false, nil)
-//                        }
-//                    } else {
-//                        let error = NewsRequestError(message: "Favorites query was not successful.")
-//                        completionHandler(nil, error)
-//                    }
-//                }
-//            }
-//        } else {
-//            let error = NewsRequestError(message: "User not loged in")
-//            completionHandler(nil, error)
-//        }
-//    }
-    
     func isFavorite(title: String, completionHandler: @escaping (_ response: Bool?, _ error: Error?) -> Void) {
         let currentUser = Auth.auth().currentUser
         if let user = currentUser {
@@ -153,4 +118,37 @@ class FirebaseFavoriteNewsService {
             completionHandler(nil, error)
         }
     }
+    
+    func getFavoritesFromDate(date: Date, completionHandler: @escaping (_ response: [[String: Any]]?, _ error: Error?) -> Void) {
+        let currentUser = Auth.auth().currentUser
+        if let user = currentUser {
+            
+            let dateFormatter = DateFormatter()
+            let enUSPosixLocale = Locale(identifier: "en_US_POSIX")
+            dateFormatter.locale = enUSPosixLocale
+            dateFormatter.dateFormat = "yyyy-MM-dd"
+            let createdDate = dateFormatter.string(from: date)
+            
+            db.collection("users").document(user.uid).collection("favorites").whereField("published_at", isEqualTo: createdDate).getDocuments() { (querySnapshot, err) in
+                if let error = err {
+                    completionHandler(nil, error)
+                } else {
+                    if let snapshot = querySnapshot {
+                        var favoritesArray: [[String: Any]] = []
+                        for element in snapshot.documents {
+                            favoritesArray.append(element.data())
+                        }
+                        completionHandler(favoritesArray, nil)
+                    } else {
+                        let error = NewsRequestError(message: "Favorites query was not successful.")
+                        completionHandler(nil, error)
+                    }
+                }
+            }
+        } else {
+            let error = NewsRequestError(message: "User not loged in")
+            completionHandler(nil, error)
+        }
+    }
+    
 }
