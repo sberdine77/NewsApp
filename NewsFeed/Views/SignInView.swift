@@ -54,6 +54,10 @@ struct SignInView: View {
                         .padding(.bottom, 15)
                         FacebookLoginButtonView(loginController: loginController)
                             .frame(width: 200, height: 50)
+                        if loginController.getIsFBLoading() {
+                            LoadIndicatorView()
+                                .padding(.top, 50)
+                        }
                     }
                     .padding(.top, 30)
                     
@@ -98,6 +102,10 @@ struct SignInView: View {
                     .padding(.bottom, 15)
                     FacebookLoginButtonView(loginController: loginController)
                         .frame(width: 200, height: 50)
+                    if loginController.getIsFBLoading() {
+                        LoadIndicatorView()
+                            .padding(.top, 50)
+                    }
                 }
                 .padding(.top, 30)
                 

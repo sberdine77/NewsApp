@@ -15,9 +15,16 @@ import FBSDKCoreKit
 
 class LoginController: NSObject, ObservableObject ,LoginButtonDelegate {
     
+    @Published private var isFBLoading: Bool = false
+    
+    func getIsFBLoading() -> Bool {
+        return self.isFBLoading
+    }
+    
     func loginButton(_ loginButton: FBLoginButton, didCompleteWith result: LoginManagerLoginResult?, error: Error?) {
+        self.isFBLoading = true
         if error != nil {
-            // print(error?.localizedDescription)
+            // print(error?.localizedDescription
             return
         }
 
@@ -26,6 +33,7 @@ class LoginController: NSObject, ObservableObject ,LoginButtonDelegate {
             Auth.auth().signIn(with: credential) { (authResult, error) in
                 if let error = error {
                     print(error.localizedDescription)
+                    self.isFBLoading = false
                 } else {
                     let parameters = ["email": "savio5@savioteste.com", "password": "12345678"]
                     let headers: HTTPHeaders = [.accept("application/json")]
@@ -35,28 +43,30 @@ class LoginController: NSObject, ObservableObject ,LoginButtonDelegate {
                             if let responseSuccess = JSON as? [String: Any] {
                                 if let tokenResponse = responseSuccess["token"] as? String {
                                     self.token = tokenResponse
-                                    
+                                    self.isFBLoading = false
                                     let storageToken = Token(context: self.context!)
                                     storageToken.token = self.token
                                     self.saveContext()
-                                    
                                 } else {
                                     if let errorMessage = responseSuccess["message"] as? String {
                                         let err = LoginError(message: errorMessage)
                                         print(err)
+                                        self.isFBLoading = false
                                     } else {
                                         let err = LoginError(message: "Uknown error. Please, try again later.")
                                         print(err)
+                                        self.isFBLoading = false
                                     }
                                 }
                             } else {
                                 let err = LoginError(message: "Uknown error. Please, try again later.")
                                 print(err)
+                                self.isFBLoading = false
                             }
                             break
                         case .failure(let error):
                             print(error)
-
+                            self.isFBLoading = false
                         }
                     }
                 }
